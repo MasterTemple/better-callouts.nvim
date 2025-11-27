@@ -43,8 +43,9 @@ function M.render_buffer(bufnr)
 			-- Render the entire block from start to end.
 			for k = i, block_end_idx - 1 do
 				local current_line = lines[k + 1]
-
-				if k == i then
+				if k == vim.api.nvim_win_get_cursor(0)[1] - 1 then
+					-- do nothing
+				elseif k == i then
 					-- --- Render Title Line ---
 					-- Conceal the `> [!name]` part and overlay with `│ {icon}`
 					vim.api.nvim_buf_set_extmark(bufnr, ns_id, k, 0, {

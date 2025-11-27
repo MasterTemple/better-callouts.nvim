@@ -40,7 +40,7 @@ function M.setup(user_config)
 
 	-- Define the autocommands to trigger the renderer.
 	-- This ensures it runs on BufEnter and on any text change.
-	vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "TextChangedI" }, {
+	vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "TextChangedI", "CursorMoved", "CursorMovedI" }, {
 		group = augroup,
 		pattern = "*.md",
 		callback = function(args)
