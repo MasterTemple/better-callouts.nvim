@@ -6,11 +6,11 @@ local M = {}
 M.default_config = {
 	-- 1. A map/table of callout names to icons and highlight data.
 	callouts = {
-		note = { icon = "", highlight = "DiagnosticInfo" },
-		tip = { icon = "", highlight = "DiagnosticOk" },
-		important = { icon = "", highlight = "DiagnosticHint" },
-		warning = { icon = "", highlight = "DiagnosticWarn" },
-		danger = { icon = "", highlight = "DiagnosticError" },
+		note = { icon = "?", highlight = "DiagnosticInfo" },
+		tip = { icon = "?", highlight = "DiagnosticOk" },
+		important = { icon = "?", highlight = "DiagnosticHint" },
+		warning = { icon = "?", highlight = "DiagnosticWarn" },
+		danger = { icon = "?", highlight = "DiagnosticError" },
 		-- Example from the request
 		bible = { icon = "", highlight = "@label" },
 		pdf = { icon = "󰸱", highlight = "@comment.warning" },

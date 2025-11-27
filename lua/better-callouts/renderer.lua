@@ -65,11 +65,14 @@ function M.render_buffer(bufnr)
 					-- --- Render Body Line ---
 					local body_prefix = string.match(current_line, "^(> )")
 					if body_prefix then
+						local _, depth = current_line:gsub("> ", "")
 						-- Conceal the `> ` part and overlay with `│ `
 						vim.api.nvim_buf_set_extmark(bufnr, ns_id, k, 0, {
-							end_col = #body_prefix,
+							-- end_col = #body_prefix,
+							end_col = depth * 2,
 							conceal = "",
-							virt_text = { { "│ ", def.highlight } },
+							-- virt_text = { { "│ ", def.highlight } },
+							virt_text = { { ("│ "):rep(depth), def.highlight } },
 							virt_text_pos = "inline",
 							hl_eol = true,
 						})
