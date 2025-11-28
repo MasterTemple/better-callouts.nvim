@@ -29,7 +29,7 @@ function M.render_buffer(bufnr)
 
 		if name then
 			-- We found a callout block. Now, find its extent.
-			local def = config.callouts[name] or config.fallback(name)
+			local def = config.callouts[name] or config.callouts[config.aliases[name]] or config.fallback(name)
 			local block_end_idx = i + 1
 
 			-- Find the end of the block (consecutive lines starting with `> `)
