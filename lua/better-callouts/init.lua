@@ -6,20 +6,24 @@ local M = {}
 M.default_config = {
 	-- 1. A map/table of callout names to icons and highlight data.
 	callouts = {
-		note = { icon = "?", highlight = "DiagnosticInfo" },
-		tip = { icon = "?", highlight = "DiagnosticOk" },
-		important = { icon = "?", highlight = "DiagnosticHint" },
-		warning = { icon = "?", highlight = "DiagnosticWarn" },
-		danger = { icon = "?", highlight = "DiagnosticError" },
+		info = { icon = "", highlight = "Conditional" },
+		note = { icon = "󱞂", highlight = "DiagnosticInfo" },
+		tip = { icon = "", highlight = "DiagnosticOk" },
+		important = { icon = "󰈅", highlight = "DiagnosticHint" },
+		warning = { icon = "", highlight = "DiagnosticWarn" },
+		danger = { icon = "", highlight = "DiagnosticError" },
 		-- Example from the request
+		quote = { icon = "", highlight = "@markup" },
 		bible = { icon = "", highlight = "@label" },
-		pdf = { icon = "󰸱", highlight = "@comment.warning" },
+		pdf = { icon = "", highlight = "@comment.warning" },
 	},
 	-- 2. A function to be called if the map doesn't match.
 	-- It receives the callout name and must return a table with 'icon' and 'highlight'.
 	fallback = function(name)
+		-- Let's create a more dynamic fallback
+		local first_char = string.sub(name, 1, 1):upper()
 		return {
-			icon = "CL",
+			icon = "[" .. first_char .. "]",
 			highlight = "Comment",
 		}
 	end,

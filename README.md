@@ -1,32 +1,19 @@
+# `better-callouts.nvim`
+
+Render callouts in Neovim
+
+## Setup
+
 Example Lazy.nvim config at `~/.config/nvim/lua/plugins/better-callouts.lua`
 
 ```lua
 return {
-  -- For local development, use 'dir'
-  -- dir = '/path/to/your/projects/better-callouts.nvim',
-
-  -- For installing from a GitHub repository (once you publish it)
-  -- 'your-username/better-callouts.nvim',
-
-  -- Example using a placeholder GitHub repo for demonstration
-  -- 'nvim-lua/plenary.nvim', -- A dependency, just as an example
-  name = 'better-callouts.nvim', -- Optional: set a custom name for the plugin
-  -- dir = vim.fn.stdpath 'config' .. '/path/to/plugin/better-callouts.nvim', -- Example local path
-  dir = '/home/dgmastertemple/Development/lua/better-callouts.nvim', -- Local dev path
+  'mastertemple/better-callouts.nvim',
   ft = 'markdown', -- Lazy-load only for markdown filetypes
 
   opts = {
     -- This is where you override the default options.
     callouts = {
-      -- You can add your own callouts or override existing ones.
-      info = {
-        icon = '?',
-        highlight = 'DiagnosticInfo',
-      },
-      quote = {
-        icon = '?',
-        highlight = 'String',
-      },
       bible = {
         icon = '',
         highlight = '@label',
@@ -50,3 +37,9 @@ return {
   end,
 }
 ```
+
+## Screenshots
+
+Example rendering:
+
+![](./assets/screenshot.png)
