@@ -43,3 +43,8 @@ return {
 Example rendering:
 
 ![](./assets/screenshot.png)
+
+## TODO
+
+1. Fix embeded callouts `> > [!quote]` (This is not because I am starting from `^> `, but rather because I am in the "remaining lines loop"); The solution is to render all embeds and all callout titles separately
+2. Fix visual selection preview

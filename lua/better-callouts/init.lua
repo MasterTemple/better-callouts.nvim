@@ -22,8 +22,7 @@ M.default_config = {
 		quote = { icon = "", highlight = "@markup", aliases = { "cite" } },
 
 		-- Obsidian PDF++ highlights (it is easier than making an algorithm for now)
-		pdf = { icon = "", highlight = "@comment.warning" },
-		["pdf|yellow"] = { icon = "", highlight = "@comment.warning" },
+		["pdf|yellow"] = { icon = "", highlight = "@comment.warning", aliases = { "pdf" } },
 		["pdf|red"] = { icon = "", highlight = "@comment.error" },
 		["pdf|note"] = { icon = "", highlight = "@comment.todo" },
 		["pdf|important"] = { icon = "", highlight = "@keyword.function" },

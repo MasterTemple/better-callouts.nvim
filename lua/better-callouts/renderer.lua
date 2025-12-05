@@ -19,16 +19,19 @@ function M.render_buffer(bufnr)
 
 	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
 	local i = 0
+	local mode = vim.api.nvim_get_mode().mode
+	local is_visual_mode = mode == "v" or mode == "V" or mode == "CTRL-V"
 
 	while i < #lines do
 		local line = lines[i + 1] -- Lua lists are 1-based
 
 		-- Regex to match a callout title line: `> [!NAME] ...`
 		-- Captures: 1. The full prefix (e.g., `> [!note]`), 2. The name (e.g., `note`), 3. The title text.
-		local prefix, name, title_text = string.match(line, "^(> %[!([^%]]+)%])(%s*.*)$")
+		local prefix, name, title = string.match(line, "^(> %[!([^%]]+)%])(%s*.*)$")
 
 		if name then
 			-- We found a callout block. Now, find its extent.
+			name = string.lower(name)
 			local def = config.callouts[name] or config.callouts[config.aliases[name]] or config.fallback(name)
 			local block_end_idx = i + 1
 
@@ -43,8 +46,15 @@ function M.render_buffer(bufnr)
 			-- Render the entire block from start to end.
 			for k = i, block_end_idx - 1 do
 				local current_line = lines[k + 1]
+				-- Cursor line
 				if k == vim.api.nvim_win_get_cursor(0)[1] - 1 then
 					-- do nothing
+
+					-- Cursor visual selection
+					-- BUG: This is broken
+					-- elseif is_visual_mode and (vim.fn.getpos("'<")[2] - 1 < k and k <= vim.fn.getpos("'>")[2]) then
+
+					-- Callout title
 				elseif k == i then
 					-- --- Render Title Line ---
 					-- Conceal the `> [!name]` part and overlay with `│ {icon}`
@@ -62,6 +72,7 @@ function M.render_buffer(bufnr)
 						hl_group = def.highlight,
 						hl_eol = true,
 					})
+				-- Callout body
 				else
 					-- --- Render Body Line ---
 					local body_prefix = string.match(current_line, "^(> )")
