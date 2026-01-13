@@ -33,6 +33,8 @@ M.default_config = {
 
 		x = { icon = "", highlight = "@conceal", aliases = { "twitter", "tweet" } },
 	},
+	-- Default embed color
+	embed_color = "@none",
 	-- 2. A function to be called if the map doesn't match.
 	-- It receives the callout name and must return a table with 'icon' and 'highlight'.
 	fallback = function(name)

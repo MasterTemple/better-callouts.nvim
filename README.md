@@ -19,6 +19,8 @@ return {
         highlight = '@label',
       },
     },
+    -- Default embed color
+    embed_color = '@none',
     -- You can provide your own fallback function.
     fallback = function(name)
       -- Let's create a more dynamic fallback
