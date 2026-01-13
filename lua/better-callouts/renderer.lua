@@ -2,25 +2,6 @@
 
 local M = {}
 
--- Source - https://stackoverflow.com/a
--- Posted by hookenz, modified by community. See post 'Timeline' for change history
--- Retrieved 2026-01-12, License - CC BY-SA 4.0
-
-function dump(o)
-	if type(o) == "table" then
-		local s = "{ "
-		for k, v in pairs(o) do
-			if type(k) ~= "number" then
-				k = '"' .. k .. '"'
-			end
-			s = s .. "[" .. k .. "] = " .. dump(v) .. ","
-		end
-		return s .. "} "
-	else
-		return tostring(o)
-	end
-end
-
 -- Namespace for our extmarks, to avoid conflicts with other plugins.
 local ns_id = vim.api.nvim_create_namespace("better_callouts")
 -- Store the config passed from init.lua
@@ -37,16 +18,18 @@ function M.render_buffer(bufnr)
 	vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
 
 	local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+	-- TODO: When I use this value, I get errors when modifying the buffer
 	local cursor_line = vim.api.nvim_win_get_cursor(0)[1] - 1
 	local i = 0
 	local mode = vim.api.nvim_get_mode().mode
 	local is_visual_mode = mode == "v" or mode == "V" or mode == "CTRL-V"
 
-	-- TODO: This needs to be a stack for when I have multiple
 	local callout_stack = {}
+	-- Used by Auto-continuing Embeds
 	local inside_embed = false
 	while i < #lines do
-		local line = lines[i + 1] -- Lua lists are 1-based
+		-- Lua lists are 1-based
+		local line = lines[i + 1]
 
 		-- Embeds are broken by a blank line
 		if #line == 0 then
@@ -70,30 +53,26 @@ function M.render_buffer(bufnr)
 				end
 			end
 
-			-- if i == vim.api.nvim_win_get_cursor(0)[1] - 1 then
-			-- 	print("Depth: " .. depth .. " Count: " .. count)
-			-- 	-- print(dump(callout_stack))
-			-- end
-
 			local start_col, end_col = string.find(line, "%[![^%]]+%]")
 			if start_col then
 				local name = string.sub(line, start_col + 2, end_col - 1)
-				local callout = config.callouts[name] or config.callouts[config.aliases[name]] or config.fallback(name)
+				local lowercase_name = string.lower(name)
+				local callout = config.callouts[lowercase_name]
+					or config.callouts[config.aliases[lowercase_name]]
+					or config.fallback(name)
 				table.insert(callout_stack, callout) -- push
-				-- if not Cursor line
+				-- If the cursor is not here
 				if i ~= vim.api.nvim_win_get_cursor(0)[1] - 1 then
-					-- --- Render Title Line ---
-					-- Conceal the `> [!name]` part and overlay with `│ {icon}`
+					-- Render callout icon in place of the callout identifier
 					vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, start_col, {
 						end_col = end_col,
 						conceal = "",
 						virt_text = { { callout.icon, callout.highlight } },
 						virt_text_pos = "inline",
-						hl_eol = true, -- highlight to end of line
+						hl_eol = true,
 					})
 					-- Highlight the title text itself
 					vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, end_col, {
-						-- end_col = -1,
 						end_col = #line,
 						hl_group = callout.highlight,
 						hl_eol = true,
@@ -102,15 +81,14 @@ function M.render_buffer(bufnr)
 				inside_embed = true
 			end
 
+			-- If the cursor is not here
 			if i ~= vim.api.nvim_win_get_cursor(0)[1] - 1 then
 				for d = 1, depth do
 					local current_callout = callout_stack[d]
 					vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, (d - 1) * 2, {
 						end_col = d * 2,
 						conceal = "",
-						-- virt_text = { { ("│ "):rep(depth), (current_callout or {}).highlight } },
 						virt_text = { { "│ ", (current_callout or {}).highlight or config.embed_color } },
-						-- virt_text = { { ("│ "):rep(depth) } },
 						virt_text_pos = "inline",
 						hl_eol = true,
 					})
@@ -119,6 +97,7 @@ function M.render_buffer(bufnr)
 
 		-- Embeds are broken by a blank line
 		elseif inside_embed then
+			-- If the cursor is not here
 			if i ~= vim.api.nvim_win_get_cursor(0)[1] - 1 then
 				vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, 0, {
 					end_col = 0,

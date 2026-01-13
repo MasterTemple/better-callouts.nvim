@@ -24,7 +24,7 @@ return {
 
   -- All of these are optional
   opts = {
-    -- This is where you override the default options.
+    -- This is where you add to or override the default options.
     callouts = {
       warning = {
         icon = "",
