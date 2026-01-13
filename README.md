@@ -1,6 +1,17 @@
 # `better-callouts.nvim`
 
-Render callouts in Neovim
+Render embeds & callouts in Neovim.
+
+## Features
+
+- Custom color for default embeds
+- Extendable callout list
+- Callout title, icon, and gutter highlighting
+- Dynamic callout fallback function
+- Nest callouts and embeds
+- Auto-continue top-level callouts/embed
+
+![](./assets/screenshot.png)
 
 ## Setup
 
@@ -8,22 +19,24 @@ Example Lazy.nvim config at `~/.config/nvim/lua/plugins/better-callouts.lua`
 
 ```lua
 return {
-  'mastertemple/better-callouts.nvim',
+  'MasterTemple/better-callouts.nvim',
   ft = 'markdown', -- Lazy-load only for markdown filetypes
 
+  -- All of these are optional
   opts = {
     -- This is where you override the default options.
     callouts = {
-      bible = {
-        icon = '',
-        highlight = '@label',
+      warning = {
+        icon = "",
+        highlight = "DiagnosticWarn",
+        aliases = { "caution", "attention" }
       },
     },
     -- Default embed color
     embed_color = '@none',
-    -- You can provide your own fallback function.
+    -- Provide your own fallback function.
     fallback = function(name)
-      -- Let's create a more dynamic fallback
+      -- `asdf` -> `[A]`
       local first_char = string.sub(name, 1, 1):upper()
       return {
         icon = '[' .. first_char .. ']',
@@ -40,13 +53,6 @@ return {
 }
 ```
 
-## Screenshots
-
-Example rendering:
-
-![](./assets/screenshot.png)
-
 ## TODO
 
-1. Fix embeded callouts `> > [!quote]` (This is not because I am starting from `^> `, but rather because I am in the "remaining lines loop"); The solution is to render all embeds and all callout titles separately
-2. Fix visual selection preview
+1. Fix visual selection preview

@@ -18,7 +18,7 @@ M.default_config = {
 		failure = { icon = "", highlight = "DiagnosticWarn", aliases = { "fail", "missing" } },
 		danger = { icon = "󱐌", highlight = "DiagnosticError", aliases = { "error" } },
 		bug = { icon = "", highlight = "DiagnosticError" },
-		example = { icon = "", highlight = "DiagnosticError" },
+		example = { icon = "", highlight = "@comment.hint" },
 		quote = { icon = "", highlight = "@markup", aliases = { "cite" } },
 
 		-- Obsidian PDF++ highlights (it is easier than making an algorithm for now)

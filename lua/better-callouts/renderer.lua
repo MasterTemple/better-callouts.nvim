@@ -51,6 +51,7 @@ function M.render_buffer(bufnr)
 		-- Embeds are broken by a blank line
 		if #line == 0 then
 			inside_embed = false
+			callout_stack = {}
 		end
 
 		local is_embed = string.match(line, "^> ")
