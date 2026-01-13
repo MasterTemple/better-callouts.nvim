@@ -2,6 +2,25 @@
 
 local M = {}
 
+-- Source - https://stackoverflow.com/a
+-- Posted by hookenz, modified by community. See post 'Timeline' for change history
+-- Retrieved 2026-01-12, License - CC BY-SA 4.0
+
+function dump(o)
+	if type(o) == "table" then
+		local s = "{ "
+		for k, v in pairs(o) do
+			if type(k) ~= "number" then
+				k = '"' .. k .. '"'
+			end
+			s = s .. "[" .. k .. "] = " .. dump(v) .. ","
+		end
+		return s .. "} "
+	else
+		return tostring(o)
+	end
+end
+
 -- Namespace for our extmarks, to avoid conflicts with other plugins.
 local ns_id = vim.api.nvim_create_namespace("better_callouts")
 -- Store the config passed from init.lua
@@ -120,7 +139,8 @@ function M.render_buffer(bufnr)
 
 	-- TODO: This needs to be a stack for when I have multiple
 	local current_callout = nil
-	local inside_embed = true
+	local callout_stack = {}
+	local inside_embed = false
 	while i < #lines do
 		local line = lines[i + 1] -- Lua lists are 1-based
 
@@ -130,6 +150,7 @@ function M.render_buffer(bufnr)
 			local name = string.sub(line, start_col + 2, end_col - 1)
 			local callout = config.callouts[name] or config.callouts[config.aliases[name]] or config.fallback(name)
 			current_callout = callout
+			table.insert(callout_stack, callout) -- push
 			-- if not Cursor line
 			if i ~= vim.api.nvim_win_get_cursor(0)[1] - 1 then
 				-- --- Render Title Line ---
@@ -165,16 +186,35 @@ function M.render_buffer(bufnr)
 			local depth = replacement_count or 0 -- maybe this is already what happens
 			-- local depth = 1
 			-- if not Cursor line
+			if i == vim.api.nvim_win_get_cursor(0)[1] - 1 then
+				print(dump(callout_stack))
+			end
 			if i ~= vim.api.nvim_win_get_cursor(0)[1] - 1 then
+				local count = table:getn(callout_stack)
+				for _ = depth, count do
+					table.remove(callout_stack) -- pop
+				end
+				for d = 1, depth do
+					local current_callout = callout_stack[d]
+					vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, (d - 1) * 2, {
+						end_col = d * 2,
+						conceal = "",
+						-- virt_text = { { ("│ "):rep(depth), (current_callout or {}).highlight } },
+						virt_text = { { "│ ", (current_callout or {}).highlight } },
+						-- virt_text = { { ("│ "):rep(depth) } },
+						virt_text_pos = "inline",
+						hl_eol = true,
+					})
+				end
 				-- I need a callout stack
-				vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, 0, {
-					end_col = depth * 2,
-					conceal = "",
-					virt_text = { { ("│ "):rep(depth), (current_callout or {}).highlight } },
-					-- virt_text = { { ("│ "):rep(depth) } },
-					virt_text_pos = "inline",
-					hl_eol = true,
-				})
+				-- vim.api.nvim_buf_set_extmark(bufnr, ns_id, i, 0, {
+				-- 	end_col = depth * 2,
+				-- 	conceal = "",
+				-- 	virt_text = { { ("│ "):rep(depth), (current_callout or {}).highlight } },
+				-- 	-- virt_text = { { ("│ "):rep(depth) } },
+				-- 	virt_text_pos = "inline",
+				-- 	hl_eol = true,
+				-- })
 			end
 		-- Embeds are broken by a blank line
 		elseif inside_embed then
